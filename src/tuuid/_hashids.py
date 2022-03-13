@@ -174,7 +174,11 @@ def _deprecated(func, name):
 
     @wraps(func)
     def with_warning(*args, **kwargs):
-        warnings.warn(("The %s method is deprecated and will be removed in v2.*.*" % name), DeprecationWarning)
+        warnings.warn(
+            f"The {name} method is deprecated and will be removed in v2.*.*",
+            DeprecationWarning,
+        )
+
         return func(*args, **kwargs)
 
     return with_warning
@@ -239,10 +243,18 @@ class Hashids(object):
         >>> hashids.encode(1, 23, 456)
         '1d6216i30h53elk3'
         """
-        if not (values and all(_is_uint(x) for x in values)):
-            return ""
-
-        return _encode(values, self._salt, self._min_length, self._alphabet, self._separators, self._guards)
+        return (
+            _encode(
+                values,
+                self._salt,
+                self._min_length,
+                self._alphabet,
+                self._separators,
+                self._guards,
+            )
+            if (values and all(_is_uint(x) for x in values))
+            else ""
+        )
 
     def decode(self, hashid):
         """Restore a tuple of numbers from the passed `hashid`.
